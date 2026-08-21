@@ -1,6 +1,6 @@
 # Estrellita_Marinela
 
-## 1er y 2do Parcial
+## 1er Parcial
 - [cuadro](https://github.com/nietomorenoestrellamarina-lang/Estrellita_Marinela/blob/main/Document%202%20(1).pdf)
 - [Listaenlazada](https://github.com/nietomorenoestrellamarina-lang/Estrellita_Marinela/blob/main/ListaEnlazada.java)
 - [Listaenlasadabasica](https://github.com/nietomorenoestrellamarina-lang/Estrellita_Marinela/blob/main/ListaEnlazadaBasica.java)
