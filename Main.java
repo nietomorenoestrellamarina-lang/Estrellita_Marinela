@@ -2,92 +2,237 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-
-    static Scanner scanner = new Scanner(System.in);
-
-    static ArrayList<Curso> listaCursos = new ArrayList<>();
-
-    static ArbolCursos arbol = new ArbolCursos();
-
-    static GrafoCursos grafo = new GrafoCursos(50);
-
-    static HistorialAcciones historial =
-            new HistorialAcciones();
-
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Curso> listaCursos = new ArrayList<>();
+        ArbolCursos arbolCursos = new ArbolCursos();
+        GrafoCursos grafoCursos = new GrafoCursos(20);
+        HistorialAcciones historial = new HistorialAcciones();
 
         int opcion;
-
         do {
-
-            mostrarMenu();
-
-            opcion = leerEntero("Selecciona una opción: ");
+            System.out.println("\n===== SISTEMA DE GESTION DE CURSOS UTC 3.0 =====");
+            System.out.println("1. Agregar curso");
+            System.out.println("2. Mostrar cursos");
+            System.out.println("3. Eliminar curso");
+            System.out.println("4. Inscribir estudiante");
+            System.out.println("5. Dar de baja estudiante");
+            System.out.println("6. Insertar cursos en arbol binario");
+            System.out.println("7. Buscar curso en arbol binario");
+            System.out.println("8. Mostrar recorrido inorden del arbol");
+            System.out.println("9. Crear relacion entre cursos (grafo)");
+            System.out.println("10. Mostrar grafo o matriz de adyacencia");
+            System.out.println("11. Ordenar cursos con Bubble Sort directo");
+            System.out.println("12. Ordenar cursos con Bubble Sort inverso");
+            System.out.println("13. Ordenar cursos con insercion directa");
+            System.out.println("14. Ordenar cursos con seleccion directa");
+            System.out.println("15. Busqueda secuencial");
+            System.out.println("16. Busqueda binaria");
+            System.out.println("17. Mostrar historial de acciones");
+            System.out.println("18. Funcionalidad Adicional: Comparar pasos (Secuencial vs Binaria)");
+            System.out.println("19. Salir");
+            System.out.print("Seleccione una opcion: ");
+            
+            opcion = scanner.nextInt();
+            scanner.nextLine();
 
             switch (opcion) {
-
                 case 1:
-                    agregarCurso();
+                    System.out.print("ID del curso (numerico unico): ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    
+                    boolean repetido = false;
+                    for (Curso c : listaCursos) {
+                        if (c.getIdCurso() == id) { repetido = true; break; }
+                    }
+                    if (repetido) {
+                        System.out.println("Error: Ya existe un curso con ese ID.");
+                        break;
+                    }
+
+                    System.out.print("Clave del curso: ");
+                    String clave = scanner.nextLine();
+                    System.out.print("Nombre del curso: ");
+                    String nombre = scanner.nextLine();
+                    System.out.print("Docente asignado: ");
+                    String docente = scanner.nextLine();
+                    System.out.print("Cupo maximo: ");
+                    int cupo = scanner.nextInt();
+
+                    Curso nuevoCurso = new Curso(id, clave, nombre, docente, cupo);
+                    listaCursos.add(nuevoCurso);
+                    grafoCursos.agregarVertice(nuevoCurso);
+                    historial.registrarAccion("Agrego el curso: " + nombre);
+                    System.out.println("Curso registrado exitosamente.");
                     break;
 
                 case 2:
-                    mostrarCursos();
+                    if (listaCursos.isEmpty()) {
+                        System.out.println("No existen cursos registrados.");
+                    } else {
+                        System.out.println("\n--- LISTA DE CURSOS ---");
+                        for (Curso c : listaCursos) {
+                            System.out.println(c);
+                        }
+                    }
                     break;
 
                 case 3:
-                    eliminarCurso();
+                    if (listaCursos.isEmpty()) {
+                        System.out.println("No existen cursos registrados.");
+                        break;
+                    }
+                    System.out.print("Ingrese el ID del curso a eliminar: ");
+                    int idEliminar = scanner.nextInt();
+                    Curso cEliminar = null;
+                    for (Curso c : listaCursos) {
+                        if (c.getIdCurso() == idEliminar) { cEliminar = c; break; }
+                    }
+                    if (cEliminar != null) {
+                        listaCursos.remove(cEliminar);
+                        historial.registrarAccion("Elimino el curso ID: " + idEliminar);
+                        System.out.println("Curso eliminado correctamente.");
+                    } else {
+                        System.out.println("No se encontro ningun curso con ese ID.");
+                    }
                     break;
 
                 case 4:
-                    inscribirEstudiante();
+                    if (listaCursos.isEmpty()) {
+                        System.out.println("No existen cursos registrados.");
+                        break;
+                    }
+                    System.out.print("Ingrese el ID del curso para inscribir estudiante: ");
+                    int idInsc = scanner.nextInt();
+                    boolean inscritoExito = false;
+                    for (Curso c : listaCursos) {
+                        if (c.getIdCurso() == idInsc) {
+                            if (c.getNumeroInscritos() < c.getCupoMaximo()) {
+                                c.setNumeroInscritos(c.getNumeroInscritos() + 1);
+                                historial.registrarAccion("Inscribio alumno en curso: " + c.getNombre());
+                                System.out.println("Estudiante inscrito con exito.");
+                            } else {
+                                System.out.println("El curso esta lleno (cupo maximo alcanzado).");
+                            }
+                            inscritoExito = true;
+                            break;
+                        }
+                    }
+                    if (!inscritoExito) System.out.println("Curso no encontrado.");
                     break;
 
                 case 5:
-                    darDeBajaEstudiante();
+                    if (listaCursos.isEmpty()) {
+                        System.out.println("No existen cursos registrados.");
+                        break;
+                    }
+                    System.out.print("Ingrese el ID del curso para dar de baja estudiante: ");
+                    int idBaja = scanner.nextInt();
+                    boolean bajaExito = false;
+                    for (Curso c : listaCursos) {
+                        if (c.getIdCurso() == idBaja) {
+                            if (c.getNumeroInscritos() > 0) {
+                                c.setNumeroInscritos(c.getNumeroInscritos() - 1);
+                                historial.registrarAccion("Dio de baja alumno en curso: " + c.getNombre());
+                                System.out.println("Estudiante dado de baja correctamente.");
+                            } else {
+                                System.out.println("El curso tiene cero inscritos, no se puede dar de baja.");
+                            }
+                            bajaExito = true;
+                            break;
+                        }
+                    }
+                    if (!bajaExito) System.out.println("Curso no encontrado.");
                     break;
 
-                case 6:
-                    insertarCursosArbol();
-                    break;
+                    case 6:
+                       if (listaCursos.isEmpty()) {
+                       System.out.println("No existen cursos para insertar en el arbol.");
+                       break;
+                           }
+                         for (Curso c : listaCursos) {
+                         arbolCursos.insertar(c);
+                          }
+                         historial.registrarAccion("Inserto todos los cursos en el Arbol Binario");
+                         System.out.println("Cursos volcados e insertados en el Arbol Binario de Busqueda.");
+                        break;
 
                 case 7:
-                    buscarCursoArbol();
+                    System.out.print("Ingrese el ID del curso a buscar en el arbol: ");
+                    int idArbol = scanner.nextInt();
+                    Curso encontradoArbol = arbolCursos.buscar(idArbol);
+                    if (encontradoArbol != null) {
+                        System.out.println("Curso encontrado en el arbol: " + encontradoArbol);
+                    } else {
+                        System.out.println("Busqueda sin resultados en el arbol binario.");
+                    }
                     break;
 
                 case 8:
-                    arbol.inorden();
+                    arbolCursos.mostrarInorden();
                     break;
 
                 case 9:
-                    crearRelacion();
+                    if (listaCursos.size() < 2) {
+                        System.out.println("Se requieren al menos 2 cursos para crear relaciones (grafo).");
+                        break;
+                    }
+                    System.out.print("ID del Curso Origen: ");
+                    int ori = scanner.nextInt();
+                    System.out.print("ID del Curso Destino: ");
+                    int des = scanner.nextInt();
+                    System.out.print("Peso / Nivel de dificultad (ej. 1 al 5): ");
+                    int peso = scanner.nextInt();
+                    grafoCursos.agregarArista(ori, des, peso);
+                    historial.registrarAccion("Creo relacion en grafo entre ID " + ori + " y ID " + des);
                     break;
 
                 case 10:
-                    grafo.mostrarMatriz();
+                    grafoCursos.mostrarMatriz();
                     break;
 
                 case 11:
-                    ordenarBubbleDirecto();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    Ordenamientos.bubbleSortDirecto(listaCursos);
+                    historial.registrarAccion("Ordeno cursos con Bubble Sort Directo");
                     break;
 
                 case 12:
-                    ordenarBubbleInverso();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    Ordenamientos.bubbleSortInverso(listaCursos);
+                    historial.registrarAccion("Ordeno cursos con Bubble Sort Inverso");
                     break;
 
                 case 13:
-                    ordenarInsercion();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    Ordenamientos.insercionDirecta(listaCursos);
+                    historial.registrarAccion("Ordeno cursos con Insercion Directa");
                     break;
 
                 case 14:
-                    ordenarSeleccion();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    Ordenamientos.seleccionDirecta(listaCursos);
+                    historial.registrarAccion("Ordeno cursos con Seleccion Directa");
                     break;
 
                 case 15:
-                    busquedaSecuencial();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    System.out.print("Ingrese ID a buscar (Secuencial): ");
+                    int idSec = scanner.nextInt();
+                    Curso resSec = Busquedas.busquedaSecuencial(listaCursos, idSec);
+                    if (resSec != null) System.out.println("Encontrado: " + resSec);
+                    else System.out.println("Busqueda sin resultados.");
                     break;
 
                 case 16:
-                    busquedaBinaria();
+                    if (listaCursos.isEmpty()) { System.out.println("No hay cursos."); break; }
+                    System.out.println("Nota: Asegurese de haber ordenado los cursos previamente.");
+                    System.out.print("Ingrese ID a buscar (Binaria): ");
+                    int idBin = scanner.nextInt();
+                    Curso resBin = Busquedas.busquedaBinaria(listaCursos, idBin);
+                    if (resBin != null) System.out.println("Encontrado: " + resBin);
+                    else System.out.println("Busqueda sin resultados.");
                     break;
 
                 case 17:
@@ -95,492 +240,27 @@ public class Main {
                     break;
 
                 case 18:
-                    System.out.println(
-                            "Saliendo del sistema...");
+                    if (listaCursos.isEmpty()) { 
+                        System.out.println("No hay cursos."); 
+                        break; 
+                    }
+                    System.out.print("Ingrese el ID de curso a buscar para comparar algoritmos: ");
+                    int idComp = scanner.nextInt();
+                    System.out.println("\n--- COMPARATIVA DE BUSQUEDA ---");
+                    Busquedas.busquedaSecuencial(listaCursos, idComp);
+                    ArrayList<Curso> copiaOrdenada = new ArrayList<>(listaCursos);
+                    Ordenamientos.insercionDirecta(copiaOrdenada);
+                    Busquedas.busquedaBinaria(copiaOrdenada, idComp);
+                    break;
+
+                case 19:
+                    System.out.println("Saliendo del sistema de gestion de cursos. ¡Hasta pronto!");
                     break;
 
                 default:
-                    System.out.println(
-                            "Opción no válida.");
+                    System.out.println("Opcion invalida. Intente de nuevo.");
             }
-
-        } while (opcion != 18);
-
+        } while (opcion != 19);
         scanner.close();
-    }
-
-    // =========================
-    // MENÚ
-    // =========================
-
-    public static void mostrarMenu() {
-
-        System.out.println();
-        System.out.println(
-                "===== SISTEMA DE GESTIÓN DE CURSOS UTC 3.0 =====");
-
-        System.out.println("1. Agregar curso");
-        System.out.println("2. Mostrar cursos");
-        System.out.println("3. Eliminar curso");
-        System.out.println("4. Inscribir estudiante");
-        System.out.println("5. Dar de baja estudiante");
-        System.out.println("6. Insertar cursos en árbol binario");
-        System.out.println("7. Buscar curso en árbol binario");
-        System.out.println("8. Mostrar recorrido inorden del árbol");
-        System.out.println("9. Crear relación entre cursos (grafo)");
-        System.out.println("10. Mostrar grafo o matriz de adyacencia");
-        System.out.println("11. Ordenar cursos con Bubble Sort directo");
-        System.out.println("12. Ordenar cursos con Bubble Sort inverso");
-        System.out.println("13. Ordenar cursos con inserción directa");
-        System.out.println("14. Ordenar cursos con selección directa");
-        System.out.println("15. Búsqueda secuencial");
-        System.out.println("16. Búsqueda binaria");
-        System.out.println("17. Mostrar historial de acciones");
-        System.out.println("18. Salir");
-
-        System.out.println();
-    }
-
-    // =========================
-    // AGREGAR CURSO
-    // =========================
-
-    public static void agregarCurso() {
-
-        int id = leerEntero("ID del curso: ");
-
-        if (buscarPorId(id) != null) {
-            System.out.println(
-                    "Error: el ID ya existe.");
-            return;
-        }
-
-        System.out.print("Clave del curso: ");
-        String clave = scanner.nextLine();
-
-        if (buscarPorClave(clave) != null) {
-            System.out.println(
-                    "Error: la clave ya existe.");
-            return;
-        }
-
-        System.out.print("Nombre del curso: ");
-        String nombre = scanner.nextLine();
-
-        System.out.print("Docente: ");
-        String docente = scanner.nextLine();
-
-        int cupo = leerEntero(
-                "Cupo máximo: ");
-
-        int inscritos = leerEntero(
-                "Número de inscritos: ");
-
-        if (inscritos < 0 || inscritos > cupo) {
-            System.out.println(
-                    "Cantidad de inscritos no válida.");
-            return;
-        }
-
-        Curso curso = new Curso(
-                id,
-                clave,
-                nombre,
-                docente,
-                cupo,
-                inscritos
-        );
-
-        listaCursos.add(curso);
-
-        grafo.agregarCurso(curso);
-
-        historial.registrar(
-                "Curso agregado: " + nombre);
-
-        System.out.println(
-                "Curso agregado correctamente.");
-    }
-
-    // =========================
-    // MOSTRAR CURSOS
-    // =========================
-
-    public static void mostrarCursos() {
-
-        if (listaCursos.isEmpty()) {
-            System.out.println(
-                    "No existen cursos registrados.");
-            return;
-        }
-
-        System.out.println(
-                "\n===== CURSOS REGISTRADOS =====");
-
-        for (Curso curso : listaCursos) {
-            System.out.println(curso);
-        }
-    }
-
-    // =========================
-    // ELIMINAR CURSO
-    // =========================
-
-    public static void eliminarCurso() {
-
-        int id = leerEntero(
-                "ID del curso a eliminar: ");
-
-        Curso curso = buscarPorId(id);
-
-        if (curso == null) {
-            System.out.println(
-                    "Curso no encontrado.");
-            return;
-        }
-
-        listaCursos.remove(curso);
-
-        historial.registrar(
-                "Curso eliminado: " + curso.getNombre());
-
-        System.out.println(
-                "Curso eliminado correctamente.");
-    }
-
-    // =========================
-    // INSCRIBIR ESTUDIANTE
-    // =========================
-
-    public static void inscribirEstudiante() {
-
-        int id = leerEntero(
-                "ID del curso: ");
-
-        Curso curso = buscarPorId(id);
-
-        if (curso == null) {
-            System.out.println(
-                    "Curso no encontrado.");
-            return;
-        }
-
-        if (curso.getNumeroInscritos()
-                >= curso.getCupoMaximo()) {
-
-            System.out.println(
-                    "No se puede inscribir: el curso está lleno.");
-
-            return;
-        }
-
-        curso.setNumeroInscritos(
-                curso.getNumeroInscritos() + 1);
-
-        historial.registrar(
-                "Estudiante inscrito en: "
-                + curso.getNombre());
-
-        System.out.println(
-                "Estudiante inscrito correctamente.");
-    }
-
-    // =========================
-    // DAR DE BAJA
-    // =========================
-
-    public static void darDeBajaEstudiante() {
-
-        int id = leerEntero(
-                "ID del curso: ");
-
-        Curso curso = buscarPorId(id);
-
-        if (curso == null) {
-            System.out.println(
-                    "Curso no encontrado.");
-            return;
-        }
-
-        if (curso.getNumeroInscritos() == 0) {
-
-            System.out.println(
-                    "No se puede realizar la baja: "
-                    + "el curso tiene cero inscritos.");
-
-            return;
-        }
-
-        curso.setNumeroInscritos(
-                curso.getNumeroInscritos() - 1);
-
-        historial.registrar(
-                "Estudiante dado de baja de: "
-                + curso.getNombre());
-
-        System.out.println(
-                "Baja realizada correctamente.");
-    }
-
-    // =========================
-    // ÁRBOL
-    // =========================
-
-    public static void insertarCursosArbol() {
-
-        if (listaCursos.isEmpty()) {
-
-            System.out.println(
-                    "No existen cursos registrados.");
-
-            return;
-        }
-
-        for (Curso curso : listaCursos) {
-            arbol.insertar(curso);
-        }
-
-        historial.registrar(
-                "Cursos insertados en el árbol binario.");
-
-        System.out.println(
-                "Cursos insertados en el árbol.");
-    }
-
-    public static void buscarCursoArbol() {
-
-        int id = leerEntero(
-                "ID del curso a buscar: ");
-
-        Curso curso = arbol.buscar(id);
-
-        if (curso != null) {
-
-            System.out.println(
-                    "Curso encontrado:");
-
-            System.out.println(curso);
-
-            historial.registrar(
-                    "Búsqueda en árbol: ID " + id);
-
-        } else {
-
-            System.out.println(
-                    "Curso no encontrado.");
-        }
-    }
-
-    // =========================
-    // GRAFO
-    // =========================
-
-    public static void crearRelacion() {
-
-        int idA = leerEntero(
-                "ID del curso origen: ");
-
-        int idB = leerEntero(
-                "ID del curso destino: ");
-
-        grafo.crearRelacion(idA, idB);
-
-        historial.registrar(
-                "Relación creada: "
-                + idA + " -> " + idB);
-    }
-
-    // =========================
-    // ORDENAMIENTOS
-    // =========================
-
-    public static Curso[] convertirArray() {
-
-        return listaCursos.toArray(
-                new Curso[0]);
-    }
-
-    public static void ordenarBubbleDirecto() {
-
-        Curso[] cursos = convertirArray();
-
-        Ordenamientos.bubbleSortDirecto(
-                cursos,
-                cursos.length);
-
-        Ordenamientos.mostrarCursos(
-                cursos,
-                cursos.length);
-
-        historial.registrar(
-                "Bubble Sort directo ejecutado.");
-    }
-
-    public static void ordenarBubbleInverso() {
-
-        Curso[] cursos = convertirArray();
-
-        Ordenamientos.bubbleSortInverso(
-                cursos,
-                cursos.length);
-
-        Ordenamientos.mostrarCursos(
-                cursos,
-                cursos.length);
-
-        historial.registrar(
-                "Bubble Sort inverso ejecutado.");
-    }
-
-    public static void ordenarInsercion() {
-
-        Curso[] cursos = convertirArray();
-
-        Ordenamientos.insercionDirecta(
-                cursos,
-                cursos.length);
-
-        Ordenamientos.mostrarCursos(
-                cursos,
-                cursos.length);
-
-        historial.registrar(
-                "Inserción directa ejecutada.");
-    }
-
-    public static void ordenarSeleccion() {
-
-        Curso[] cursos = convertirArray();
-
-        Ordenamientos.seleccionDirecta(
-                cursos,
-                cursos.length);
-
-        Ordenamientos.mostrarCursos(
-                cursos,
-                cursos.length);
-
-        historial.registrar(
-                "Selección directa ejecutada.");
-    }
-
-    // =========================
-    // BÚSQUEDA SECUENCIAL
-    // =========================
-
-    public static void busquedaSecuencial() {
-
-        int id = leerEntero(
-                "ID del curso a buscar: ");
-
-        Curso curso =
-                Busquedas.busquedaSecuencial(
-                        listaCursos.toArray(
-                                new Curso[0]),
-                        listaCursos.size(),
-                        id);
-
-        Busquedas.mostrarResultado(
-                curso,
-                "búsqueda secuencial");
-
-        historial.registrar(
-                "Búsqueda secuencial: ID " + id);
-    }
-
-    // =========================
-    // BÚSQUEDA BINARIA
-    // =========================
-
-    public static void busquedaBinaria() {
-
-        if (listaCursos.isEmpty()) {
-
-            System.out.println(
-                    "No existen cursos registrados.");
-
-            return;
-        }
-
-        Curso[] cursos = convertirArray();
-
-        Ordenamientos.insercionDirecta(
-                cursos,
-                cursos.length);
-
-        int id = leerEntero(
-                "ID del curso a buscar: ");
-
-        Curso curso =
-                Busquedas.busquedaBinaria(
-                        cursos,
-                        cursos.length,
-                        id);
-
-        Busquedas.mostrarResultado(
-                curso,
-                "búsqueda binaria");
-
-        historial.registrar(
-                "Búsqueda binaria: ID " + id);
-    }
-
-    // =========================
-    // BUSCAR POR ID
-    // =========================
-
-    public static Curso buscarPorId(int id) {
-
-        for (Curso curso : listaCursos) {
-
-            if (curso.getIdCurso() == id) {
-                return curso;
-            }
-        }
-
-        return null;
-    }
-
-    // =========================
-    // BUSCAR POR CLAVE
-    // =========================
-
-    public static Curso buscarPorClave(
-            String clave) {
-
-        for (Curso curso : listaCursos) {
-
-            if (curso.getClave()
-                    .equalsIgnoreCase(clave)) {
-
-                return curso;
-            }
-        }
-
-        return null;
-    }
-
-    // =========================
-    // LEER ENTERO
-    // =========================
-
-    public static int leerEntero(
-            String mensaje) {
-
-        while (true) {
-
-            try {
-
-                System.out.print(mensaje);
-
-                return Integer.parseInt(
-                        scanner.nextLine());
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "Ingresa un número válido.");
-            }
-        }
     }
 }

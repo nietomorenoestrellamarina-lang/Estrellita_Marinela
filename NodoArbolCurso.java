@@ -1,12 +1,11 @@
 public class NodoArbolCurso {
-
     Curso curso;
-    NodoArbolCurso izquierda;
-    NodoArbolCurso derecha;
+    NodoArbolCurso izquierdo;
+    NodoArbolCurso derecho;
 
     public NodoArbolCurso(Curso curso) {
         this.curso = curso;
-        this.izquierda = null;
-        this.derecha = null;
+        this.izquierdo = null;
+        this.derecho = null;
     }
 }

@@ -1,91 +1,56 @@
 public class ArbolCursos {
-
     private NodoArbolCurso raiz;
 
     public ArbolCursos() {
-        raiz = null;
+        this.raiz = null;
     }
 
-    // Insertar un curso en el árbol
     public void insertar(Curso curso) {
-        raiz = insertarRecursivo(raiz, curso);
+        raiz = insertarRec(raiz, curso);
     }
 
-    private NodoArbolCurso insertarRecursivo(
-            NodoArbolCurso nodo, Curso curso) {
-
-        if (nodo == null) {
+    private NodoArbolCurso insertarRec(NodoArbolCurso actual, Curso curso) {
+        if (actual == null) {
             return new NodoArbolCurso(curso);
         }
-
-        if (curso.getIdCurso() < nodo.curso.getIdCurso()) {
-            nodo.izquierda =
-                    insertarRecursivo(nodo.izquierda, curso);
-
-        } else if (curso.getIdCurso() > nodo.curso.getIdCurso()) {
-            nodo.derecha =
-                    insertarRecursivo(nodo.derecha, curso);
-
+        if (curso.getIdCurso() < actual.curso.getIdCurso()) {
+            actual.izquierdo = insertarRec(actual.izquierdo, curso);
+        } else if (curso.getIdCurso() > actual.curso.getIdCurso()) {
+            actual.derecho = insertarRec(actual.derecho, curso);
         } else {
-            System.out.println(
-                    "Error: ya existe un curso con ese ID.");
+            System.out.println("El ID de curso ya existe en el arbol.");
         }
-
-        return nodo;
+        return actual;
     }
 
-    // Buscar un curso por ID
     public Curso buscar(int idCurso) {
-        NodoArbolCurso resultado =
-                buscarRecursivo(raiz, idCurso);
-
-        if (resultado != null) {
-            return resultado.curso;
-        }
-
-        return null;
+        return buscarRec(raiz, idCurso);
     }
 
-    private NodoArbolCurso buscarRecursivo(
-            NodoArbolCurso nodo, int idCurso) {
-
-        if (nodo == null) {
-            return null;
+    private Curso buscarRec(NodoArbolCurso actual, int idCurso) {
+        if (actual == null || actual.curso.getIdCurso() == idCurso) {
+            return actual != null ? actual.curso : null;
         }
-
-        if (idCurso == nodo.curso.getIdCurso()) {
-            return nodo;
+        if (idCurso < actual.curso.getIdCurso()) {
+            return buscarRec(actual.izquierdo, idCurso);
         }
-
-        if (idCurso < nodo.curso.getIdCurso()) {
-            return buscarRecursivo(
-                    nodo.izquierda, idCurso);
-        }
-
-        return buscarRecursivo(
-                nodo.derecha, idCurso);
+        return buscarRec(actual.derecho, idCurso);
     }
 
-    // Recorrido inorden
-    public void inorden() {
+    public void mostrarInorden() {
         if (raiz == null) {
-            System.out.println(
-                    "El árbol no tiene cursos registrados.");
+            System.out.println("El arbol binario esta vacio.");
             return;
         }
-
-        inordenRecursivo(raiz);
+        System.out.println("\n--- RECORRIDO INORDEN (ARBOL DE CURSOS) ---");
+        inordenRec(raiz);
     }
 
-    private void inordenRecursivo(NodoArbolCurso nodo) {
-
-        if (nodo != null) {
-
-            inordenRecursivo(nodo.izquierda);
-
-            System.out.println(nodo.curso);
-
-            inordenRecursivo(nodo.derecha);
+    private void inordenRec(NodoArbolCurso actual) {
+        if (actual != null) {
+            inordenRec(actual.izquierdo);
+            System.out.println(actual.curso);
+            inordenRec(actual.derecho);
         }
     }
 }

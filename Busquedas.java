@@ -1,62 +1,41 @@
+import java.util.ArrayList;
+
 public class Busquedas {
 
-    // Búsqueda secuencial
-    public static Curso busquedaSecuencial(
-            Curso[] cursos, int cantidad, int idBuscado) {
-
-        for (int i = 0; i < cantidad; i++) {
-
-            if (cursos[i].getIdCurso() == idBuscado) {
-                return cursos[i];
+    public static Curso busquedaSecuencial(ArrayList<Curso> cursos, int idBuscado) {
+        int pasos = 0;
+        for (Curso c : cursos) {
+            pasos++;
+            if (c.getIdCurso() == idBuscado) {
+                System.out.println("[Busqueda Secuencial] Pasos realizados: " + pasos);
+                return c;
             }
         }
-
+        System.out.println("[Busqueda Secuencial] Pasos realizados: " + pasos);
         return null;
     }
 
-    // Búsqueda binaria
-    public static Curso busquedaBinaria(
-            Curso[] cursos, int cantidad, int idBuscado) {
-
+    public static Curso busquedaBinaria(ArrayList<Curso> cursos, int idBuscado) {
         int inicio = 0;
-        int fin = cantidad - 1;
+        int fin = cursos.size() - 1;
+        int pasos = 0;
 
         while (inicio <= fin) {
+            pasos++;
+            int medio = inicio + (fin - inicio) / 2;
+            Curso cMedio = cursos.get(medio);
 
-            int medio = (inicio + fin) / 2;
-
-            int idMedio = cursos[medio].getIdCurso();
-
-            if (idMedio == idBuscado) {
-                return cursos[medio];
+            if (cMedio.getIdCurso() == idBuscado) {
+                System.out.println("[Busqueda Binaria] Pasos realizados: " + pasos);
+                return cMedio;
             }
-
-            if (idBuscado < idMedio) {
-                fin = medio - 1;
-            } else {
+            if (cMedio.getIdCurso() < idBuscado) {
                 inicio = medio + 1;
+            } else {
+                fin = medio - 1;
             }
         }
-
+        System.out.println("[Busqueda Binaria] Pasos realizados: " + pasos);
         return null;
-    }
-
-    // Mostrar resultado de búsqueda
-    public static void mostrarResultado(
-            Curso curso, String tipoBusqueda) {
-
-        if (curso != null) {
-
-            System.out.println(
-                    "\nCurso encontrado mediante "
-                    + tipoBusqueda + ":");
-
-            System.out.println(curso);
-
-        } else {
-
-            System.out.println(
-                    "\nNo se encontró el curso.");
-        }
     }
 }

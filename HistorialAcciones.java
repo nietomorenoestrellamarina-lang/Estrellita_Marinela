@@ -1,36 +1,24 @@
-import java.util.ArrayList;
+import java.util.Stack;
 
 public class HistorialAcciones {
-
-    private ArrayList<String> historial;
+    private Stack<String> pilaHistorial;
 
     public HistorialAcciones() {
-        historial = new ArrayList<>();
+        this.pilaHistorial = new Stack<>();
     }
 
-    // Registrar una acción
-    public void registrar(String accion) {
-        historial.add(accion);
+    public void registrarAccion(String accion) {
+        pilaHistorial.push(accion);
     }
 
-    // Mostrar historial
     public void mostrarHistorial() {
-
-        if (historial.isEmpty()) {
-
-            System.out.println(
-                    "No hay acciones registradas.");
-
+        if (pilaHistorial.isEmpty()) {
+            System.out.println("No hay acciones registradas en el historial.");
             return;
         }
-
-        System.out.println(
-                "\n===== HISTORIAL DE ACCIONES =====");
-
-        for (int i = 0; i < historial.size(); i++) {
-
-            System.out.println(
-                    (i + 1) + ". " + historial.get(i));
+        System.out.println("\n--- HISTORIAL DE ACCIONES (STACK) ---");
+        for (int i = pilaHistorial.size() - 1; i >= 0; i--) {
+            System.out.println("- " + pilaHistorial.get(i));
         }
     }
 }

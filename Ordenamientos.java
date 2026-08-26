@@ -1,110 +1,62 @@
+import java.util.ArrayList;
+
 public class Ordenamientos {
 
-    // Bubble Sort directo
-    public static void bubbleSortDirecto(Curso[] cursos, int cantidad) {
-
-        for (int i = 0; i < cantidad - 1; i++) {
-
-            for (int j = 0; j < cantidad - 1 - i; j++) {
-
-                if (cursos[j].getIdCurso() >
-                    cursos[j + 1].getIdCurso()) {
-
-                    Curso temporal = cursos[j];
-                    cursos[j] = cursos[j + 1];
-                    cursos[j + 1] = temporal;
+    public static void bubbleSortDirecto(ArrayList<Curso> cursos) {
+        int n = cursos.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (cursos.get(j).getIdCurso() > cursos.get(j + 1).getIdCurso()) {
+                    Curso temp = cursos.get(j);
+                    cursos.set(j, cursos.get(j + 1));
+                    cursos.set(j + 1, temp);
                 }
             }
         }
-
-        System.out.println(
-                "Cursos ordenados con Bubble Sort directo.");
+        System.out.println("Cursos ordenados por Bubble Sort Directo (por ID).");
     }
 
-    // Bubble Sort inverso
-    public static void bubbleSortInverso(
-            Curso[] cursos, int cantidad) {
-
-        for (int i = 0; i < cantidad - 1; i++) {
-
-            for (int j = 0; j < cantidad - 1 - i; j++) {
-
-                if (cursos[j].getIdCurso() <
-                    cursos[j + 1].getIdCurso()) {
-
-                    Curso temporal = cursos[j];
-                    cursos[j] = cursos[j + 1];
-                    cursos[j + 1] = temporal;
+    public static void bubbleSortInverso(ArrayList<Curso> cursos) {
+        int n = cursos.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (cursos.get(j).getIdCurso() < cursos.get(j + 1).getIdCurso()) {
+                    Curso temp = cursos.get(j);
+                    cursos.set(j, cursos.get(j + 1));
+                    cursos.set(j + 1, temp);
                 }
             }
         }
-
-        System.out.println(
-                "Cursos ordenados con Bubble Sort inverso.");
+        System.out.println("Cursos ordenados por Bubble Sort Inverso (por ID).");
     }
 
-    // Inserción directa
-    public static void insercionDirecta(
-            Curso[] cursos, int cantidad) {
-
-        for (int i = 1; i < cantidad; i++) {
-
-            Curso actual = cursos[i];
+    public static void insercionDirecta(ArrayList<Curso> cursos) {
+        int n = cursos.size();
+        for (int i = 1; i < n; ++i) {
+            Curso key = cursos.get(i);
             int j = i - 1;
-
-            while (j >= 0 &&
-                   cursos[j].getIdCurso() >
-                   actual.getIdCurso()) {
-
-                cursos[j + 1] = cursos[j];
-                j--;
+            while (j >= 0 && cursos.get(j).getIdCurso() > key.getIdCurso()) {
+                cursos.set(j + 1, cursos.get(j));
+                j = j - 1;
             }
-
-            cursos[j + 1] = actual;
+            cursos.set(j + 1, key);
         }
-
-        System.out.println(
-                "Cursos ordenados con inserción directa.");
+        System.out.println("Cursos ordenados por Insercion Directa (por ID).");
     }
 
-    // Selección directa
-    public static void seleccionDirecta(
-            Curso[] cursos, int cantidad) {
-
-        for (int i = 0; i < cantidad - 1; i++) {
-
-            int posicionMenor = i;
-
-            for (int j = i + 1; j < cantidad; j++) {
-
-                if (cursos[j].getIdCurso() <
-                    cursos[posicionMenor].getIdCurso()) {
-
-                    posicionMenor = j;
+    public static void seleccionDirecta(ArrayList<Curso> cursos) {
+        int n = cursos.size();
+        for (int i = 0; i < n - 1; i++) {
+            int minIdx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (cursos.get(j).getIdCurso() < cursos.get(minIdx).getIdCurso()) {
+                    minIdx = j;
                 }
             }
-
-            Curso temporal = cursos[i];
-            cursos[i] = cursos[posicionMenor];
-            cursos[posicionMenor] = temporal;
+            Curso temp = cursos.get(minIdx);
+            cursos.set(minIdx, cursos.get(i));
+            cursos.set(i, temp);
         }
-
-        System.out.println(
-                "Cursos ordenados con selección directa.");
-    }
-
-    // Mostrar cursos
-    public static void mostrarCursos(
-            Curso[] cursos, int cantidad) {
-
-        if (cantidad == 0) {
-            System.out.println(
-                    "No existen cursos registrados.");
-            return;
-        }
-
-        for (int i = 0; i < cantidad; i++) {
-            System.out.println(cursos[i]);
-        }
+        System.out.println("Cursos ordenados por Seleccion Directa (por ID).");
     }
 }
